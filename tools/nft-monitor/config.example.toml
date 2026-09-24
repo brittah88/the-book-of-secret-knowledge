@@ -1,0 +1,66 @@
+# Copy to config.toml and fill in your PUBLIC wallet addresses.
+# NEVER put a private key or seed phrase here - the tool refuses to start
+# if it sees one, and nothing in this tool ever needs them.
+#
+# API keys are read from environment variables, not from this file:
+#   OPENSEA_API_KEY      required for EVM wallets (free: https://docs.opensea.io)
+#   MAGICEDEN_API_KEY    optional, raises Solana rate limits
+#   DISCORD_WEBHOOK_URL  optional, alerts to a Discord channel
+#   TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID  optional, alerts to Telegram
+
+[settings]
+listings_depth = 20          # cheapest listings pulled per collection
+reference_rank = 2           # the N cheapest listings are compared to the (N+1)th
+underpriced_pct = 15         # flag listings at least this % under that reference
+floor_move_pct = 10          # alert when a floor moves this much between scans
+take_profit_pct = 25         # alert when best offer (after fees) beats cost basis by this %
+alert_cooldown_minutes = 60  # don't repeat the same alert more often than this
+interval_seconds = 300       # --watch cadence
+state_db = "nft_monitor_state.db"
+report_path = "nft_monitor_report.json"
+
+# One block per wallet. chain: ethereum, base, polygon, arbitrum, optimism,
+# zora, avalanche, blast, ape_chain, ... (anything OpenSea supports) or solana.
+[[wallets]]
+label = "main"
+chain = "ethereum"
+address = "0x0000000000000000000000000000000000000000"
+
+[[wallets]]
+label = "base-hot"
+chain = "base"
+address = "0x0000000000000000000000000000000000000000"
+
+# [[wallets]]
+# label = "phantom"
+# chain = "solana"
+# address = "YourSolanaPublicAddressHere"
+
+# Collections to scan for opportunities even if you don't hold them.
+# EVM: OpenSea collection slug (the part after opensea.io/collection/).
+# Solana: Magic Eden collection symbol.
+# [[watch]]
+# chain = "ethereum"
+# collection = "some-collection-slug"
+
+# What you paid per item, used for take-profit alerts. Key = "chain:collection".
+[cost_basis]
+# "ethereum:my-art-collection" = 0.25
+
+# Per-chain costs in the chain's native coin. Defaults are conservative;
+# tune them to what you actually pay.
+# platform_fee_pct is the marketplace fee; creator royalties are added on top
+# automatically from the marketplace data where available.
+[chains.ethereum]
+platform_fee_pct = 2.5
+gas = 0.003
+min_profit = 0.02
+
+[chains.base]
+gas = 0.0002
+min_profit = 0.005
+
+[chains.solana]
+platform_fee_pct = 2.0
+gas = 0.00002
+min_profit = 0.2

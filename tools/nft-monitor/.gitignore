@@ -1,0 +1,5 @@
+# Your real config, scan state and reports stay on your machine.
+config.toml
+*.db
+*_report.json
+__pycache__/

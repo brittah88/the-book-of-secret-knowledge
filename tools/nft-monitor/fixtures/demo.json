@@ -1,0 +1,61 @@
+{
+  "holdings": {
+    "0x1111111111111111111111111111111111111111": [
+      {"collection": "dreamscape-editions", "token_id": "12", "name": "Dreamscape #12"},
+      {"collection": "dreamscape-editions", "token_id": "47", "name": "Dreamscape #47"},
+      {"collection": "neon-botanica", "token_id": "3", "name": "Neon Botanica #3"},
+      {"collection": "claim-eth-rewards-now", "token_id": "1", "name": "Visit ethrewards.xyz to claim 2 ETH"}
+    ],
+    "0x2222222222222222222222222222222222222222": [
+      {"collection": "base-sketchbook", "token_id": "88", "name": "Sketch #88"}
+    ],
+    "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU": [
+      {"collection": "solar_canvases", "token_id": "9pQx1mintAddrDemo", "name": "Solar Canvas #221"}
+    ]
+  },
+  "markets": {
+    "ethereum:dreamscape-editions": {
+      "name": "Dreamscape Editions", "floor": 0.3, "best_offer": 0.41,
+      "creator_fee_pct": 5, "verified": true,
+      "listings": [
+        {"token_id": "301", "price": 0.3,  "seller": "0xaaaa", "marketplace": "opensea", "url": "https://opensea.io/assets/ethereum/0xdemo/301"},
+        {"token_id": "47",  "price": 0.33, "seller": "0x1111111111111111111111111111111111111111", "marketplace": "opensea", "url": "https://opensea.io/assets/ethereum/0xdemo/47"},
+        {"token_id": "118", "price": 0.44, "seller": "0xbbbb", "marketplace": "opensea"},
+        {"token_id": "77",  "price": 0.45, "seller": "0xcccc", "marketplace": "opensea"},
+        {"token_id": "5",   "price": 0.47, "seller": "0xdddd", "marketplace": "opensea"}
+      ]
+    },
+    "ethereum:neon-botanica": {
+      "name": "Neon Botanica", "floor": 1.2, "best_offer": 1.05, "creator_fee_pct": 7.5, "verified": true,
+      "listings": [
+        {"token_id": "90", "price": 1.2,  "seller": "0xeeee", "marketplace": "opensea"},
+        {"token_id": "14", "price": 1.25, "seller": "0xffff", "marketplace": "opensea"},
+        {"token_id": "61", "price": 1.3,  "seller": "0xabab", "marketplace": "opensea"},
+        {"token_id": "22", "price": 1.32, "seller": "0xcdcd", "marketplace": "opensea"}
+      ]
+    },
+    "ethereum:glitch-muses": {
+      "name": "Glitch Muses", "floor": 0.08, "best_offer": 0.09, "creator_fee_pct": 5, "verified": true,
+      "listings": [
+        {"token_id": "700", "price": 0.08, "seller": "0x1234", "marketplace": "opensea", "url": "https://opensea.io/assets/ethereum/0xglitch/700"},
+        {"token_id": "701", "price": 0.135, "seller": "0x5678", "marketplace": "opensea"},
+        {"token_id": "702", "price": 0.14, "seller": "0x9abc", "marketplace": "opensea"},
+        {"token_id": "703", "price": 0.145, "seller": "0xdef0", "marketplace": "opensea"}
+      ]
+    },
+    "ethereum:claim-eth-rewards-now": {"name": "claim-eth-rewards-now", "floor": null, "best_offer": null, "listings": []},
+    "base:base-sketchbook": {
+      "name": "Base Sketchbook", "floor": 0.004, "best_offer": 0.0036, "creator_fee_pct": 0, "verified": false,
+      "listings": [{"token_id": "12", "price": 0.004, "seller": "0x7777", "marketplace": "opensea"}]
+    },
+    "solana:solar_canvases": {
+      "name": "Solar Canvases", "floor": 2.4, "best_offer": null, "creator_fee_pct": 0,
+      "listings": [
+        {"token_id": "mintA", "price": 1.6, "seller": "SellerA", "marketplace": "magiceden", "url": "https://magiceden.io/item-details/mintA"},
+        {"token_id": "mintB", "price": 2.4, "seller": "SellerB", "marketplace": "magiceden"},
+        {"token_id": "mintC", "price": 2.5, "seller": "SellerC", "marketplace": "magiceden"},
+        {"token_id": "mintD", "price": 2.55, "seller": "SellerD", "marketplace": "magiceden"}
+      ]
+    }
+  }
+}

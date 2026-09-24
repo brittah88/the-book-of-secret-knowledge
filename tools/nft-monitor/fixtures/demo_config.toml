@@ -1,0 +1,25 @@
+# Offline demo config used by `python3 nft_monitor.py --demo`.
+[settings]
+report_path = "demo_report.json"
+
+[[wallets]]
+label = "vault"
+chain = "ethereum"
+address = "0x1111111111111111111111111111111111111111"
+
+[[wallets]]
+label = "hot"
+chain = "base"
+address = "0x2222222222222222222222222222222222222222"
+
+[[wallets]]
+label = "sol"
+chain = "solana"
+address = "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"
+
+[[watch]]
+chain = "ethereum"
+collection = "glitch-muses"
+
+[cost_basis]
+"ethereum:dreamscape-editions" = 0.2
