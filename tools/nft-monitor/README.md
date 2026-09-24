@@ -1,14 +1,43 @@
 # NFT Monitor
 
-A read-only script that watches the NFTs and art tokens in all your wallets and
-scans the market for price gaps you can act on.
+A read-only script that watches the NFTs and art tokens in all your wallets,
+scans the market for price gaps you can act on, and finds forgotten coins and
+tokens sitting in your wallets across every chain.
 
 - **No private keys, ever.** It only needs your *public* wallet addresses. It
   never signs, buys, sells or approves anything. If you paste something that
   looks like a private key or seed phrase into the config, it refuses to start.
 - **Nothing to install.** Python 3.11+ standard library only.
 - **Chains:** Ethereum and EVM L2s (Base, Polygon, Arbitrum, Optimism, Zora, …)
-  via the OpenSea API v2; Solana via the Magic Eden API v2.
+  via the OpenSea API v2; Solana via the Magic Eden API v2. The balance scan
+  adds BNB Chain, Avalanche, Linea, Scroll, zkSync and more via Alchemy, plus
+  Bitcoin via mempool.space.
+
+## Find forgotten crypto (`--balances`)
+
+```bash
+export ALCHEMY_API_KEY=...             # free at dashboard.alchemy.com
+python3 nft_monitor.py --balances
+python3 nft_monitor.py --demo --balances   # sample run, no key needed
+```
+
+Your `0x` address is the **same address on every Ethereum-style chain**, so the
+balance scan checks each one on all 15 supported chains, not just the one you
+listed it under. It reports:
+
+- **Every coin and token worth $1 or more**, with its USD value, largest first.
+- **FORGOTTEN?**: money found on a chain you didn't list for that wallet.
+- **Needs gas**: tokens sitting on a chain where you have none of that
+  chain's own coin, so you'll need a little of it (e.g. ETH on Arbitrum)
+  before you can move them.
+- **Dust**: tiny balances, summed into one line.
+- **Unpriced** and **hidden** tokens: no market price, or names that look like
+  scam airdrops ("claim", website links). These are not counted in your total.
+  Don't interact with them.
+
+In your Alchemy dashboard, enable every network you want scanned. Networks
+that aren't enabled are skipped and listed at the end of the report.
+Bitcoin needs each receiving address listed separately (`chain = "bitcoin"`).
 
 ## What it finds
 
@@ -86,5 +115,5 @@ These are leads, not guarantees. Always check on the marketplace itself:
 ## Tests
 
 ```bash
-python3 -m unittest -v test_nft_monitor
+python3 -m unittest -v test_nft_monitor test_balances
 ```

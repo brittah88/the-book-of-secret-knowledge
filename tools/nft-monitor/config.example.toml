@@ -3,7 +3,8 @@
 # if it sees one, and nothing in this tool ever needs them.
 #
 # API keys are read from environment variables, not from this file:
-#   OPENSEA_API_KEY      required for EVM wallets (free: https://docs.opensea.io)
+#   OPENSEA_API_KEY      required for the NFT scan of EVM wallets (free: https://docs.opensea.io)
+#   ALCHEMY_API_KEY      required for --balances (free: https://dashboard.alchemy.com)
 #   MAGICEDEN_API_KEY    optional, raises Solana rate limits
 #   DISCORD_WEBHOOK_URL  optional, alerts to a Discord channel
 #   TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID  optional, alerts to Telegram
@@ -36,6 +37,12 @@ address = "0x0000000000000000000000000000000000000000"
 # chain = "solana"
 # address = "YourSolanaPublicAddressHere"
 
+# Bitcoin wallets are checked by --balances only. Add each receiving address.
+# [[wallets]]
+# label = "old-btc"
+# chain = "bitcoin"
+# address = "bc1q..."
+
 # Collections to scan for opportunities even if you don't hold them.
 # EVM: OpenSea collection slug (the part after opensea.io/collection/).
 # Solana: Magic Eden collection symbol.
@@ -64,3 +71,13 @@ min_profit = 0.005
 platform_fee_pct = 2.0
 gas = 0.00002
 min_profit = 0.2
+
+# --balances: finds coins and tokens in every wallet. Each 0x address is
+# checked on ALL the EVM chains below, not just the one it's listed under.
+[balances]
+min_usd = 1.0                          # smaller balances are summed up as "dust"
+report_path = "balances_report.json"
+# Leave evm_chains out to scan every supported chain:
+# ethereum base arbitrum optimism polygon bnb avalanche zora blast linea
+# scroll zksync unichain worldchain ape_chain
+# evm_chains = ["ethereum", "base", "arbitrum", "optimism", "polygon"]

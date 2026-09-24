@@ -23,3 +23,12 @@ collection = "glitch-muses"
 
 [cost_basis]
 "ethereum:dreamscape-editions" = 0.2
+
+[[wallets]]
+label = "old-btc"
+chain = "bitcoin"
+address = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"
+
+[balances]
+min_usd = 1.0
+report_path = "demo_balances_report.json"

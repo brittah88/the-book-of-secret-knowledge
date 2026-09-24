@@ -29,6 +29,7 @@ Usage
   python3 nft_monitor.py --config config.toml            # one scan
   python3 nft_monitor.py --config config.toml --watch    # scan forever
   python3 nft_monitor.py --demo                          # offline sample run
+  python3 nft_monitor.py --config config.toml --balances # find forgotten crypto
 
 Requires Python 3.11+ and nothing outside the standard library.
 """
@@ -156,6 +157,10 @@ DEFAULT_CHAIN_OVERRIDES = {
 _HEX_KEY_RE = re.compile(r"^(0x)?[0-9a-fA-F]{64}$")
 _EVM_ADDR_RE = re.compile(r"^0x[0-9a-fA-F]{40}$")
 _SOL_ADDR_RE = re.compile(r"^[1-9A-HJ-NP-Za-km-z]{32,44}$")
+_BTC_ADDR_RE = re.compile(
+    r"^(bc1[02-9ac-hj-np-z]{11,71}|[13][1-9A-HJ-NP-Za-km-z]{25,34})$")
+# Chains tracked for balances only (no NFT marketplace scan).
+BALANCE_ONLY_CHAINS = {"bitcoin"}
 
 
 class ConfigError(Exception):
@@ -173,6 +178,11 @@ def looks_like_secret(value: str) -> bool:
     # Base58 Solana secret keys are ~87-88 chars; addresses are 32-44.
     if re.fullmatch(r"[1-9A-HJ-NP-Za-km-z]{80,90}", v):
         return True
+    # Bitcoin WIF private keys and extended private keys.
+    if re.fullmatch(r"[5KL][1-9A-HJ-NP-Za-km-z]{50,51}", v):
+        return True
+    if re.match(r"^[xyzt]prv[1-9A-HJ-NP-Za-km-z]{100,}$", v):
+        return True
     return False
 
 
@@ -186,6 +196,9 @@ def validate_address(chain: str, address: str) -> None:
     if chain == "solana":
         if not _SOL_ADDR_RE.match(address):
             raise ConfigError(f"Not a valid Solana address: {address!r}")
+    elif chain == "bitcoin":
+        if not _BTC_ADDR_RE.match(address):
+            raise ConfigError(f"Not a valid Bitcoin address: {address!r}")
     elif not _EVM_ADDR_RE.match(address):
         raise ConfigError(f"Not a valid EVM address for {chain}: {address!r}")
 
@@ -210,6 +223,7 @@ def load_config(path: Path) -> dict[str, Any]:
     ]
     cfg["cost_basis"] = raw.get("cost_basis", {})
     cfg["chains"] = raw.get("chains", {})
+    cfg["balances"] = raw.get("balances", {})
     cfg["base_dir"] = path.resolve().parent
     return cfg
 
@@ -625,7 +639,8 @@ def build_providers(cfg: dict[str, Any], http: Http, demo: Path | None) -> dict[
         return {"evm": p, "solana": p}
     depth = int(cfg["settings"]["listings_depth"])
     providers: dict[str, Any] = {}
-    chains = {w["chain"] for w in cfg["wallets"]} | {w["chain"] for w in cfg["watch"]}
+    chains = ({w["chain"] for w in cfg["wallets"]} | {w["chain"] for w in cfg["watch"]}) \
+        - BALANCE_ONLY_CHAINS
     if any(c != "solana" for c in chains):
         providers["evm"] = OpenSeaProvider(http, os.environ.get("OPENSEA_API_KEY", ""), depth)
     if "solana" in chains:
@@ -643,6 +658,8 @@ def scan(cfg: dict[str, Any], providers: dict[str, Any], state: State) -> dict[s
     holdings: list[Holding] = []
 
     for w in cfg["wallets"]:
+        if w["chain"] in BALANCE_ONLY_CHAINS:
+            continue
         try:
             holdings += provider_for(providers, w["chain"]).holdings(
                 w["chain"], w["address"], w["label"])
@@ -731,6 +748,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--interval", type=int, help="seconds between scans in --watch mode")
     ap.add_argument("--demo", action="store_true", help="offline run using fixtures/")
     ap.add_argument("--quiet", action="store_true", help="only write the JSON report")
+    ap.add_argument("--balances", action="store_true",
+                    help="find coins and tokens (incl. forgotten ones) in every wallet")
     args = ap.parse_args(argv)
 
     demo = None
@@ -744,6 +763,14 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     http = Http(float(cfg["settings"]["request_delay_seconds"]))
+    if args.balances:
+        from balances import run_balances
+        try:
+            return run_balances(cfg, http, demo and HERE / "fixtures" / "demo_balances.json",
+                                args.quiet)
+        except ConfigError as exc:
+            print(f"Config error: {exc}", file=sys.stderr)
+            return 2
     try:
         providers = build_providers(cfg, http, demo)
     except ConfigError as exc:
@@ -761,4 +788,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    # Let balances.py's `import nft_monitor` reuse this module instead of
+    # loading a second copy with its own ConfigError class.
+    sys.modules.setdefault("nft_monitor", sys.modules[__name__])
     sys.exit(main())
